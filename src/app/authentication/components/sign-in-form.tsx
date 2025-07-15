@@ -22,8 +22,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-const registerSchema = z.object({
-	name: z.string().trim().min(1, "Nome é obrigatório"),
+const formSchema = z.object({
 	email: z
 		.string()
 		.trim()
@@ -32,17 +31,16 @@ const registerSchema = z.object({
 	password: z.string().trim().min(6, "Senha deve ter pelo menos 6 caracteres"),
 });
 
-export default function SignUpForm() {
-	const form = useForm<z.infer<typeof registerSchema>>({
-		resolver: zodResolver(registerSchema),
+export default function SignInForm() {
+	const form = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
 		defaultValues: {
-			name: "",
 			email: "",
 			password: "",
 		},
 	});
 
-	function onSubmit(values: z.infer<typeof registerSchema>) {
+	function onSubmit(values: z.infer<typeof formSchema>) {
 		console.log(values);
 	}
 
@@ -51,25 +49,10 @@ export default function SignUpForm() {
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 					<CardHeader>
-						<CardTitle>Criar Conta</CardTitle>
-						<CardDescription>
-							Crie sua conta para acessar o sistema.
-						</CardDescription>
+						<CardTitle>Login</CardTitle>
+						<CardDescription>Faça login para continuar.</CardDescription>
 					</CardHeader>
 					<CardContent className="gap-6 grid">
-						<FormField
-							control={form.control}
-							name="name"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Nome</FormLabel>
-									<FormControl>
-										<Input placeholder="Digite o seu nome" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
 						<FormField
 							control={form.control}
 							name="email"
@@ -99,7 +82,7 @@ export default function SignUpForm() {
 					</CardContent>
 					<CardFooter>
 						<Button type="submit" className="w-full">
-							Criar conta
+							Entrar
 						</Button>
 					</CardFooter>
 				</form>

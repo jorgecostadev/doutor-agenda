@@ -8,6 +8,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import SignInForm from "./components/sign-in-form";
 import SignUpForm from "./components/sign-up-form";
 
 const AuthenticationPage = () => {
@@ -20,16 +21,7 @@ const AuthenticationPage = () => {
 						<TabsTrigger value="register">Criar Conta</TabsTrigger>
 					</TabsList>
 					<TabsContent value="login">
-						<Card>
-							<CardHeader>
-								<CardTitle>Login</CardTitle>
-								<CardDescription>Faça login para continuar.</CardDescription>
-							</CardHeader>
-							<CardContent className="gap-6 grid"></CardContent>
-							<CardFooter>
-								<Button>Entrar</Button>
-							</CardFooter>
-						</Card>
+						<SignInForm />
 					</TabsContent>
 					<TabsContent value="register">
 						<SignUpForm />
