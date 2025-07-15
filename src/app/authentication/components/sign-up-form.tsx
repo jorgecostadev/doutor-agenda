@@ -21,6 +21,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 
 const registerSchema = z.object({
 	name: z.string().trim().min(1, "Nome é obrigatório"),
@@ -42,8 +43,13 @@ export default function SignUpForm() {
 		},
 	});
 
-	function onSubmit(values: z.infer<typeof registerSchema>) {
-		console.log(values);
+	async function onSubmit(values: z.infer<typeof registerSchema>) {
+		await authClient.signUp.email({
+			name: values.name,
+			email: values.email,
+			password: values.password,
+			callbackURL: "/dashboard",
+		});
 	}
 
 	return (
