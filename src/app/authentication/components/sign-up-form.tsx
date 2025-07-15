@@ -1,6 +1,9 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { on } from "events";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { Button } from "@/components/ui/button";
@@ -34,6 +37,7 @@ const registerSchema = z.object({
 });
 
 export default function SignUpForm() {
+	const router = useRouter();
 	const form = useForm<z.infer<typeof registerSchema>>({
 		resolver: zodResolver(registerSchema),
 		defaultValues: {
@@ -44,12 +48,22 @@ export default function SignUpForm() {
 	});
 
 	async function onSubmit(values: z.infer<typeof registerSchema>) {
-		await authClient.signUp.email({
-			name: values.name,
-			email: values.email,
-			password: values.password,
-			callbackURL: "/dashboard",
-		});
+		await authClient.signUp.email(
+			{
+				name: values.name,
+				email: values.email,
+				password: values.password,
+				callbackURL: "/dashboard",
+			},
+			{
+				onSuccess: () => {
+					router.push("/dashboard");
+				},
+				onError: (error) => {
+					console.error("Erro ao criar conta:", error);
+				},
+			},
+		);
 	}
 
 	return (
@@ -59,7 +73,7 @@ export default function SignUpForm() {
 					<CardHeader>
 						<CardTitle>Criar Conta</CardTitle>
 						<CardDescription>
-							Crie sua conta para acessar o sistema.
+							Crie sua conta para acessar o sistema..
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="gap-6 grid">
@@ -104,8 +118,16 @@ export default function SignUpForm() {
 						/>
 					</CardContent>
 					<CardFooter>
-						<Button type="submit" className="w-full">
-							Criar conta
+						<Button
+							type="submit"
+							className="w-full"
+							disabled={form.formState.isSubmitting}
+						>
+							{form.formState.isSubmitting ? (
+								<Loader2 className="animate-spin" />
+							) : (
+								"Criar Conta"
+							)}
 						</Button>
 					</CardFooter>
 				</form>
