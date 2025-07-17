@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { on } from "events";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -24,7 +23,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
+import { signUpWithEmailAndPassword } from "@/lib/auth-client";
 
 const registerSchema = z.object({
 	name: z.string().trim().min(1, "Nome é obrigatório"),
@@ -48,22 +47,14 @@ export default function SignUpForm() {
 	});
 
 	async function onSubmit(values: z.infer<typeof registerSchema>) {
-		await authClient.signUp.email(
-			{
-				name: values.name,
-				email: values.email,
-				password: values.password,
-				callbackURL: "/dashboard",
+		await signUpWithEmailAndPassword({
+			name: values.name,
+			email: values.email,
+			password: values.password,
+			onSuccess: () => {
+				router.push("/dashboard");
 			},
-			{
-				onSuccess: () => {
-					router.push("/dashboard");
-				},
-				onError: (error) => {
-					console.error("Erro ao criar conta:", error);
-				},
-			},
-		);
+		});
 	}
 
 	return (
