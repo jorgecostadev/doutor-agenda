@@ -1,17 +1,14 @@
-import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { auth } from "@/lib/auth";
 import SignInForm from "./components/sign-in-form";
 import SignUpForm from "./components/sign-up-form";
 
-const AuthenticationPage = () => {
+export default async function AuthenticationPage() {
+	const session = await auth.api.getSession({ headers: await headers() });
+	if (session) redirect("/dashboard");
+
 	return (
 		<div className="flex justify-center items-center w-screen h-screen">
 			<div className="flex flex-col gap-6 w-full max-w-sm">
@@ -30,6 +27,4 @@ const AuthenticationPage = () => {
 			</div>
 		</div>
 	);
-};
-
-export default AuthenticationPage;
+}
