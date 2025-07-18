@@ -2,10 +2,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import toastError from "@/components/shared/toast-message";
+import ShowPassword from "@/components/shared/show-password";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -36,6 +38,7 @@ const formSchema = z.object({
 });
 
 export default function SignInForm() {
+	const [showPassword, setShowPassword] = useState(false);
 	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -45,7 +48,7 @@ export default function SignInForm() {
 		},
 	});
 
-	async function onSubmit(values: z.infer<typeof formSchema>) {
+	const handleSubmit = async (values: z.infer<typeof formSchema>) => {
 		await signInWithEmailAndPassword({
 			email: values.email,
 			password: values.password,
@@ -53,12 +56,19 @@ export default function SignInForm() {
 				router.push("/dashboard");
 			},
 		});
-	}
+	};
+
+	const handleGoogleSignin = async () => {
+		await authClient.signIn.social({
+			provider: "google",
+			callbackURL: "/dashboard",
+		});
+	};
 
 	return (
 		<Card>
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+				<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
 					<CardHeader>
 						<CardTitle>Login</CardTitle>
 						<CardDescription>Faça login para continuar.</CardDescription>
@@ -84,17 +94,27 @@ export default function SignInForm() {
 								<FormItem>
 									<FormLabel>Senha</FormLabel>
 									<FormControl>
-										<Input placeholder="Digite a sua senha" {...field} />
+										<div className="relative">
+											<Input
+												placeholder="Digite a sua senha"
+												type={showPassword ? "text" : "password"}
+												{...field}
+											/>
+											<ShowPassword
+												isVisible={showPassword}
+												toggleVisibility={() => setShowPassword(!showPassword)}
+											/>
+										</div>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
 					</CardContent>
-					<CardFooter>
+					<CardFooter className="flex flex-col gap-4">
 						<Button
 							type="submit"
-							className="w-full"
+							className="w-full cursor-pointer"
 							disabled={form.formState.isSubmitting}
 						>
 							{form.formState.isSubmitting ? (
@@ -102,6 +122,20 @@ export default function SignInForm() {
 							) : (
 								"Entrar"
 							)}
+						</Button>
+						<Button
+							type="button"
+							className="w-full cursor-pointer"
+							variant="outline"
+							onClick={handleGoogleSignin}
+						>
+							<Image
+								alt="Fazer login com o Google"
+								src="/google.svg"
+								width={18}
+								height={18}
+							/>
+							Entrar com Google
 						</Button>
 					</CardFooter>
 				</form>

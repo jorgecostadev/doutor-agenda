@@ -3,8 +3,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
+import ShowPassword from "@/components/shared/show-password";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -36,6 +38,7 @@ const registerSchema = z.object({
 });
 
 export default function SignUpForm() {
+	const [showPassword, setShowPassword] = useState(false);
 	const router = useRouter();
 	const form = useForm<z.infer<typeof registerSchema>>({
 		resolver: zodResolver(registerSchema),
@@ -46,7 +49,7 @@ export default function SignUpForm() {
 		},
 	});
 
-	async function onSubmit(values: z.infer<typeof registerSchema>) {
+	const handleSubmit = async (values: z.infer<typeof registerSchema>) => {
 		await signUpWithEmailAndPassword({
 			name: values.name,
 			email: values.email,
@@ -55,12 +58,12 @@ export default function SignUpForm() {
 				router.push("/dashboard");
 			},
 		});
-	}
+	};
 
 	return (
 		<Card>
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+				<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
 					<CardHeader>
 						<CardTitle>Criar Conta</CardTitle>
 						<CardDescription>
@@ -101,7 +104,17 @@ export default function SignUpForm() {
 								<FormItem>
 									<FormLabel>Senha</FormLabel>
 									<FormControl>
-										<Input placeholder="Digite a sua senha" {...field} />
+										<div className="relative">
+											<Input
+												placeholder="Digite a sua senha"
+												type={showPassword ? "text" : "password"}
+												{...field}
+											/>
+											<ShowPassword
+												isVisible={showPassword}
+												toggleVisibility={() => setShowPassword(!showPassword)}
+											/>
+										</div>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -111,7 +124,7 @@ export default function SignUpForm() {
 					<CardFooter>
 						<Button
 							type="submit"
-							className="w-full"
+							className="w-full cursor-pointer"
 							disabled={form.formState.isSubmitting}
 						>
 							{form.formState.isSubmitting ? (
