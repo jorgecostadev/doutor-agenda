@@ -117,6 +117,7 @@ export default function SignInForm() {
 							className="w-full cursor-pointer"
 							disabled={form.formState.isSubmitting}
 						>
+							{/* //TODO: create a loading button component */}
 							{form.formState.isSubmitting ? (
 								<Loader2 className="animate-spin" />
 							) : (

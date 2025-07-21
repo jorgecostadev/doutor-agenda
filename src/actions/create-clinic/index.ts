@@ -7,6 +7,7 @@ import { clinicsTable, usersToClinicsTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 export const createClinic = async (name: string) => {
+	// TODO: move user session to a separete function
 	const session = await auth.api.getSession({
 		headers: await headers(),
 	});

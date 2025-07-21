@@ -6,6 +6,7 @@ import SignInForm from "./components/sign-in-form";
 import SignUpForm from "./components/sign-up-form";
 
 export default async function AuthenticationPage() {
+	// TODO: move user session to a separete function
 	const session = await auth.api.getSession({ headers: await headers() });
 	if (session) redirect("/dashboard");
 

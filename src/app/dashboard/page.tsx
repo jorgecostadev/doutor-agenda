@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import SignOutButton from "./components/sign-out-button";
 
 export default async function DashboardPage() {
+	// TODO: move user session to a separete function
 	const session = await auth.api.getSession({ headers: await headers() });
 	if (!session) redirect("/authentication");
 
