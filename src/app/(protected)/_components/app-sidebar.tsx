@@ -1,5 +1,6 @@
 "use client";
 
+import { AvatarFallback } from "@radix-ui/react-avatar";
 import {
 	CalendarDays,
 	LayoutDashboard,
@@ -10,6 +11,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -55,6 +57,7 @@ const items = [
 ];
 
 export function AppSidebar() {
+	const session = authClient.useSession();
 	const router = useRouter();
 	const handleSignout = async () => {
 		await authClient.signOut({
@@ -95,7 +98,17 @@ export function AppSidebar() {
 					<SidebarMenuItem>
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
-								<Button>Clínica</Button>
+								<SidebarMenuButton size="lg">
+									<Avatar className="justify-center items-center bg-blue-200">
+										<AvatarFallback>JC</AvatarFallback>
+									</Avatar>
+									<div className="m-2">
+										<p className="text-sm">{session.data?.clinic.name}</p>
+										<p className="text-muted-foreground text-sm">
+											{session.data?.user.email}
+										</p>
+									</div>
+								</SidebarMenuButton>
 							</DropdownMenuTrigger>
 							<DropdownMenuContent>
 								<DropdownMenuItem onClick={handleSignout}>

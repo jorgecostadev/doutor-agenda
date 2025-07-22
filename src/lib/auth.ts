@@ -1,11 +1,10 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-
+import { customSession } from "better-auth/plugins";
+import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 import { env } from "./env";
-
-const FIVE_MINUTES = 5 * 60;
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -18,6 +17,25 @@ export const auth = betterAuth({
 			clientSecret: env.GOOGLE_CLIENT_SECRET,
 		},
 	},
+	plugins: [
+		customSession(async ({ user, session }) => {
+			const [clinic] = await db.query.usersToClinicsTable.findMany({
+				where: eq(schema.usersToClinicsTable.userId, user.id),
+				with: {
+					clinic: true,
+				},
+			});
+			return {
+				user: {
+					...user,
+				},
+				clinic: {
+					id: clinic.clinicId,
+					name: clinic.clinic.name,
+				},
+			};
+		}),
+	],
 	user: {
 		modelName: "usersTable",
 	},

@@ -1,9 +1,12 @@
+import { customSessionClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import toastError from "@/components/shared/toast-message";
+import type { auth } from "./auth";
 
 export const authClient = createAuthClient({
 	/** Se estiver utilizando uma API separada, é necessário informar a URL dela abaixo */
 	// baseURL: "http://localhost:3000",
+	plugins: [customSessionClient<typeof auth>()],
 });
 
 type ErrorTypes = Partial<
