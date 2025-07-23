@@ -1,8 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import { useAction } from "next-safe-action/hooks";
 import { useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
+import { toast } from "sonner";
 import z from "zod";
+import { upsertDoctor } from "@/actions/upsert-doctor";
 import { Button } from "@/components/ui/button";
 import {
 	DialogContent,
@@ -52,7 +55,13 @@ const formSchema = z
 		},
 	);
 
-export default function UpsertDoctorForm() {
+interface UpsertDoctorFormProps {
+	onSucccess?: () => void;
+}
+
+export default function UpsertDoctorForm({
+	onSucccess,
+}: UpsertDoctorFormProps) {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -65,8 +74,23 @@ export default function UpsertDoctorForm() {
 			availableToTime: "",
 		},
 	});
+	const upsertDoctorAction = useAction(upsertDoctor, {
+		onSuccess: () => {
+			toast.success("Médico salvo com sucesso!");
+			onSucccess?.();
+		},
+		onError: (error: any) =>
+			toast.error(error.message || "Erro ao salvar médico"),
+	});
 
-	const handleSubmit = (values: z.infer<typeof formSchema>) => {};
+	const handleSubmit = (values: z.infer<typeof formSchema>) => {
+		upsertDoctorAction.execute({
+			...values,
+			appointmentPriceInCents: values.appointmentPrice * 100,
+			availableFromWeekDay: parseInt(values.availableFromWeekDay),
+			availableToWeekDay: parseInt(values.availableToWeekDay),
+		});
+	};
 
 	return (
 		<DialogContent>
@@ -337,8 +361,12 @@ export default function UpsertDoctorForm() {
 						)}
 					/>
 					<DialogFooter className="mt-4">
-						<Button type="submit" className="cursor-pointer">
-							Salvar
+						<Button
+							type="submit"
+							className="cursor-pointer"
+							disabled={upsertDoctorAction.isPending}
+						>
+							{upsertDoctorAction.isPending ? "Salvando..." : "Salvar"}
 						</Button>
 					</DialogFooter>
 				</form>
