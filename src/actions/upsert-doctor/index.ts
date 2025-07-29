@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import z from "zod";
@@ -46,4 +47,5 @@ export const upsertDoctor = actionClient
 				target: [doctorsTable.id],
 				set: { ...parsedInput },
 			});
+		revalidatePath("/doctors");
 	});
