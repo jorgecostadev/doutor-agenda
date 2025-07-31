@@ -1,12 +1,13 @@
 "use client";
 
+import { DialogTrigger } from "@radix-ui/react-dialog";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import UpsertDoctorForm from "./upsert-doctor-form";
+import { Dialog } from "@/components/ui/dialog";
+import UpsertPatientForm from "./upsert-patient-form";
 
-export default function AddDoctorButton() {
+export default function AddPatientButton() {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
@@ -14,14 +15,10 @@ export default function AddDoctorButton() {
 			<DialogTrigger asChild>
 				<Button className="cursor-pointer">
 					<Plus />
-					Adicionar médico
+					Adicionar Paciente
 				</Button>
 			</DialogTrigger>
-			<UpsertDoctorForm
-				onSucccess={() => {
-					setIsOpen(false);
-				}}
-			/>
+			<UpsertPatientForm onSuccess={() => setIsOpen(false)} />
 		</Dialog>
 	);
 }
