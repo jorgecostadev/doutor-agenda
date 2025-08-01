@@ -29,6 +29,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import type { patientsTable } from "@/db/schema";
 
 const formSchema = z.object({
 	name: z.string().min(1, "Preenchimento obrigatório"),
@@ -38,20 +39,22 @@ const formSchema = z.object({
 });
 
 interface UpsertPatientFormProps {
+	patient?: typeof patientsTable.$inferSelect;
 	onSuccess?: () => void;
 }
 
 export default function UpsertPatientForm({
+	patient,
 	onSuccess,
 }: UpsertPatientFormProps) {
 	const form = useForm<z.infer<typeof formSchema>>({
 		shouldUnregister: true,
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			name: "",
-			email: "",
-			phoneNumber: "",
-			sex: undefined,
+			name: patient?.name || "",
+			email: patient?.email || "",
+			phoneNumber: patient?.phoneNumber || "",
+			sex: patient?.sex || undefined,
 		},
 	});
 
@@ -66,7 +69,7 @@ export default function UpsertPatientForm({
 	});
 
 	const handleSubmit = (values: z.infer<typeof formSchema>) => {
-		upsertPatientAction.execute(values);
+		upsertPatientAction.execute({ ...values, id: patient?.id });
 	};
 
 	return (
