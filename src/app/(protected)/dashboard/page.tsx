@@ -1,7 +1,16 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import {
+	PageActions,
+	PageContainer,
+	PageContent,
+	PageDescription,
+	PageHeader,
+	PageHeaderContent,
+	PageTitle,
+} from "@/components/shared/page-container";
 import { auth } from "@/lib/auth";
-import SignOutButton from "./_components/sign-out-button";
+import { DatePicker } from "./_components/date-picker";
 
 export default async function DashboardPage() {
 	// TODO: move user session to a separete function
@@ -10,13 +19,19 @@ export default async function DashboardPage() {
 	if (!session.clinic) redirect("/clinic-form");
 
 	return (
-		<div className="flex flex-col justify-center items-center min-h-screen">
-			<h1 className="mb-4 font-bold text-2xl">Dashboard</h1>
-			<p className="mb-4">
-				Welcome to the dashboard,{" "}
-				{session?.user ? session?.user?.name : "Guest"}
-			</p>
-			{session && <SignOutButton />}
-		</div>
+		<PageContainer>
+			<PageHeader>
+				<PageHeaderContent>
+					<PageTitle>Dashboard</PageTitle>
+					<PageDescription>Visão geral da sua clínica</PageDescription>
+				</PageHeaderContent>
+				<PageActions>
+					<DatePicker />
+				</PageActions>
+			</PageHeader>
+			<PageContent>
+				<p>Bem-vindo ao painel de controle da sua clínica!</p>
+			</PageContent>
+		</PageContainer>
 	);
 }
